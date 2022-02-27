@@ -7,8 +7,8 @@ import speed
 import threading
 from picamera import PiCamera
 
-HOST = "192.168.1.35" # IP address of your Raspberry PI
-PORT = 65434         # Port to listen on (non-privileged ports are > 1023)
+HOST = "192.168.1.35"  # IP address of your Raspberry PI
+PORT = 65434  # Port to listen on (non-privileged ports are > 1023)
 cpu = gpiozero.CPUTemperature()
 sp = 0
 distance = 0
@@ -16,6 +16,7 @@ current_direction = "stop"
 data = {}
 
 fc.stop()
+
 
 def move_command(direction):
     """
@@ -45,18 +46,19 @@ def move_command(direction):
 
     for i in range(move_time):
         time.sleep(0.1)
-        
+
         if direction == "forward" or direction == "reverse":
-            distance += round(sp /10)
+            distance += round(sp / 10)
             sp = speed_thread()
-        print("%smm/s"%sp)
-    print("%smm"%distance)
+        print("%smm/s" % sp)
+    print("%smm" % distance)
     speed_thread.deinit()
     sp = 0
     current_direction = "stop"
     fc.stop()
 
-def wifi_server ():
+
+def wifi_server():
     """
     Wifi server, will receive information from the client to
     move Picar (forward, backward, turn left or turn right) and
@@ -68,37 +70,35 @@ def wifi_server ():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
         s.listen()
-        
+
         try:
             while 1:
                 client, clientInfo = s.accept()
                 print("server recv from: ", clientInfo)
-                direction = client.recv(1024)      # receive 1024 Bytes of message in binary format
+                direction = client.recv(1024)  # receive 1024 Bytes of message in binary format
                 temp = cpu.temperature
-                data ={ "direction" : str(current_direction),
-                        "temp" : str(temp),
-                        "speed" : str(sp),
+                data = {"direction": str(current_direction),
+                        "temp": str(temp),
+                        "speed": str(sp),
                         "distance": str(distance)
                         }
-                print (data)
-                if str(direction.decode()) != "stop" :
+                print(data)
+                if str(direction.decode()) != "stop":
                     move_thread = threading.Thread(target=move_command, args=(str(direction.decode()),))
                     move_thread.start()
-                                  
+
                 ser_data = json.dumps(data)
-                
+
                 if data != b"":
-                    print(ser_data)     
-                    client.sendall(ser_data.encode()) # Echo back to client
-    
+                    print(ser_data)
+                    client.sendall(ser_data.encode())  # Echo back to client
+
         except:
             print("Closing socket")
             client.close()
             s.close()
 
 
-server_thread =threading.Thread(target=wifi_server)
+server_thread = threading.Thread(target=wifi_server)
 server_thread.start()
 server_thread.join()
-
-
