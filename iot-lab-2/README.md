@@ -4,7 +4,7 @@
 
 Code and Report of Lab 2
 
-Link for video presentation : https://uofi.box.com/s/pz7sji1m464fq45dfreanvr2spcn25lw
+Link to video presentation : https://uofi.box.com/s/pz7sji1m464fq45dfreanvr2spcn25lw
 
 ## Code Overview
 
