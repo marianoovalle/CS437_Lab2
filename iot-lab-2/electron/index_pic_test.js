@@ -4,10 +4,33 @@ const { write } = require('fs');
 document.onkeydown = updateKey;
 document.onkeyup = resetKey;
 
-var server_port = 65434;
+var server_port = 65430;
 var server_addr = "192.168.1.35";   // the IP address of your Raspberry PI
 
+function receive_picture(){
+    const fs = require('fs')
+    const net = require('net')
+    const client =  net.createConnection({port: 65001, host: server_addr}, () => {
+        client.write("12");
+    });
 
+    client.on('data', (data) => {
+       // var buf = Buffer.from(data, 'base64');
+        fs.writeFile('picture.jpg', data, (err) => {
+            if (err)
+              console.log(err);
+            else {
+              //console.log("File written successfully\n");
+              //console.log("The written has the following contents:");
+              //console.log(fs.readFileSync("picture.png", "utf8"));
+            }});
+        //console.log(data);
+
+        document.getElementById("pics").src="picture.jpg";
+        
+    })
+    
+}
 
 function client(){
     
@@ -102,3 +125,11 @@ function update_data(){
         client();
     }, 50);
 }
+
+function update_picture(){
+    setInterval(function(){
+        receive_picture();
+    }, 4000);
+}
+
+update_picture();
