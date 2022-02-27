@@ -1,10 +1,10 @@
 # CS 437 Internet of Things UIUC
 
-## Lab 2
+## Lab 2 IoT Networking
 
 Code and Report of Lab 2
 
-Link for video presentation : https://uofi.box.com/s/790ynwrdg1535i3vzbhfcqmn3ebk0hcz
+Link for video presentation : 
 
 
 ## Code Overview
