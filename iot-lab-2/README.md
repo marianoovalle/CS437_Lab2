@@ -1,38 +1,34 @@
-Explaination of Electron application files:
+# CS 437 Internet of Things UIUC
 
-- `package.json` - Points to the app's main file and lists its details and dependencies.
-- `main.js` - Starts the app and creates a browser window to render HTML. This is the app's **main process**.
-- `index.html` - A web page to render. This is the app's **renderer process**.
-- `utils.js` - functionalities of the web
+## Lab 2
 
-You can learn more about each of these components within the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start).
+Code and Report of Lab 2
 
-## To Use
+Link for video presentation : https://uofi.box.com/s/790ynwrdg1535i3vzbhfcqmn3ebk0hcz
 
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 
-```bash
-# Clone this repository
-git clone https://github.com/mccaesar/iot-labs.git
-# Go into the repository
-cd iot_lab2_UI
-# Install dependencies
-npm install
-# Run the app
-npm start
-```
+## Code Overview
 
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
+This section is intended to provide a brief overview of the codebase. All code is well-commented, so those interested in a deeper understanding of the code should use this section to understand the high-level structure of the program, but should utilize the in-file comments for a more fine-grained understanding. 
 
-## Resources for Learning Electron
+### frontend_tutorial/bt_client.py
+### frontend_tutorial/bt_server.py
 
-- [electronjs.org/docs](https://electronjs.org/docs) - all of Electron's documentation
-- [electronjs.org/community#boilerplates](https://electronjs.org/community#boilerplates) - sample starter apps created by the community
-- [electron/electron-quick-start](https://github.com/electron/electron-quick-start) - a very basic starter Electron app
-- [electron/simple-samples](https://github.com/electron/simple-samples) - small applications with ideas for taking them further
-- [electron/electron-api-demos](https://github.com/electron/electron-api-demos) - an Electron app that teaches you how to use Electron
-- [hokein/electron-sample-apps](https://github.com/hokein/electron-sample-apps) - small demo apps for the various Electron APIs
+Scripts to test bluetooth connectivity between Raspberry Pi and Laptop, server understamds 4 command to move the Picar "forward", "backward", "turn_left" and "turn_right". Any other commeand is just sent back to the client for display
 
-## License
+### frontend_tutorial/wifi_server.py
 
-[CC0 1.0 (Public Domain)](LICENSE.md)
+This is used for the second part of the Lab to create a Web service, the client will receive the following information: speed, distance traveled, status (moving forward, backward, etc.) and the CPU temperature, it also executes movement command.
+
+### electron/index.js
+### electron/index.html
+
+Front end files, displays information received from Web server about the Raspberry Pi status and send movement commands
+
+
+
+### Luis Mariano Ovalle Castaneda (lo22)
+<ul>
+   
+</ul>
+
