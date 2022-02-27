@@ -8,8 +8,9 @@ import threading
 from picamera import PiCamera
 
 HOST = "192.168.1.35" # IP address of your Raspberry PI
-PORT = 65434         # Port to listen on (non-privileged ports are > 1023)
+PORT = 65430          # Port to listen on (non-privileged ports are > 1023)
 cpu = gpiozero.CPUTemperature()
+#speed_thread = speed.Speed(25)
 sp = 0
 distance = 0
 current_direction = "stop"
@@ -17,13 +18,7 @@ data = {}
 
 fc.stop()
 
-def move_command(direction):
-    """
-    Function to execute PiCar move command and update speed and direction
-    variables
-    :param direction: move command forward, backward, turn_left or turn_right
-    :return: None
-    """
+def move(direction):
     global sp
     global distance
     global current_direction
@@ -42,13 +37,12 @@ def move_command(direction):
     if direction == "turn_right":
         fc.turn_right(25)
         move_time = 10
-
+#    x = 0
     for i in range(move_time):
         time.sleep(0.1)
-        
+        sp = speed_thread()
         if direction == "forward" or direction == "reverse":
-            distance += round(sp /10)
-            sp = speed_thread()
+            distance += int(sp /10)
         print("%smm/s"%sp)
     print("%smm"%distance)
     speed_thread.deinit()
@@ -56,21 +50,14 @@ def move_command(direction):
     current_direction = "stop"
     fc.stop()
 
-def wifi_server ():
-    """
-    Wifi server, will receive information from the client to
-    move Picar (forward, backward, turn left or turn right) and
-    send information about the Picar status (CPU temperature,
-    speed, distance and current movement)
-    :return: None
-    """
+def comms ():
     global current_direction
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
         s.listen()
-        
-        try:
-            while 1:
+
+
+        while 1:
                 client, clientInfo = s.accept()
                 print("server recv from: ", clientInfo)
                 direction = client.recv(1024)      # receive 1024 Bytes of message in binary format
@@ -82,23 +69,48 @@ def wifi_server ():
                         }
                 print (data)
                 if str(direction.decode()) != "stop" :
-                    move_thread = threading.Thread(target=move_command, args=(str(direction.decode()),))
-                    move_thread.start()
-                                  
+                    m = threading.Thread(target=move, args=(str(direction.decode()),))
+                    m.start()
+                
+                    
                 ser_data = json.dumps(data)
                 
                 if data != b"":
                     print(ser_data)     
                     client.sendall(ser_data.encode()) # Echo back to client
+         
+    print("Closing socket")
+    client.close()
+    s.close()
+
+def send_image():
+    camera = PiCamera()
+    camera.rotation = 180
+    camera.resolution = (200, 120)
+    time.sleep(0.1)
+    camera.capture("image.jpg")
     
-        except:
-            print("Closing socket")
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, 65001))
+        s.listen()
+        while 1:
+            client, clientInfo = s.accept()
+            print("camera server recv from: ", clientInfo)
+        
+            file = open("image.jpg", "rb")
+            image_data = file.read(65536)
+        
+            while image_data:
+                client.send(image_data)
+                image_data = file.read(65336)
+            
+            
+            file.close()
             client.close()
-            s.close()
-
-
-server_thread =threading.Thread(target=wifi_server)
-server_thread.start()
-server_thread.join()
+    
+send_image()
+x =threading.Thread(target=comms)
+x.start()
+x.join()
 
 
