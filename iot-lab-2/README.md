@@ -14,7 +14,7 @@ This section is intended to provide a brief overview of the codebase. All code i
 ### frontend_tutorial/bt_client.py
 ### frontend_tutorial/bt_server.py
 
-Scripts to test bluetooth connectivity between Raspberry Pi and Laptop, server understamds 4 command to move the Picar "forward", "backward", "turn_left" and "turn_right". Any other commeand is just sent back to the client for display
+Scripts to test bluetooth connectivity between Raspberry Pi and Laptop, server understamds 4 command to move the Picar "forward", "backward", "turn_left" and "turn_right". Any other command is just sent back to the client for display (echo).
 
 ### frontend_tutorial/wifi_server.py
 
